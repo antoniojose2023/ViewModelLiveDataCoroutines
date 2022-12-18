@@ -11,17 +11,30 @@ import kotlinx.coroutines.launch
 
 class UrlViewModel(private val repositoryUrlImpl: RepositoryUrlImpl = RepositoryUrlImpl()): ViewModel() {
 
-    private var _url: MutableLiveData<List<EncurtedUrl>> = MutableLiveData()
-    val url: LiveData<List<EncurtedUrl>> = _url
+    private var _url: MutableLiveData<States> = MutableLiveData()
+    val url: LiveData<States> = _url
 
     init {
         loaders()
     }
 
     fun loaders(){
+        _url.value = States.Loader
+
         viewModelScope.launch {
-            _url.value = repositoryUrlImpl.getAll()
+            try {
+                _url.value = States.Sucess(repositoryUrlImpl.getAll())
+            }catch (ex: Exception){
+                _url.value = States.Erro(ex.toString())
+            }
+
         }
+    }
+
+    sealed class States{
+       object Loader: States()
+       class Sucess(val list: List<EncurtedUrl>): States()
+       class Erro(val mensage: String): States()
     }
 
 }
