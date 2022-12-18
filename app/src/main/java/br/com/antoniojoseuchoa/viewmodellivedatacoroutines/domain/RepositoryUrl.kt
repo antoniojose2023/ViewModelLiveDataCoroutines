@@ -1,5 +1,5 @@
 package br.com.antoniojoseuchoa.viewmodellivedatacoroutines.domain
 
 interface RepositoryUrl {
-     fun getAll(): List<EncurtedUrl>
+     suspend fun getAll(): List<EncurtedUrl>
 }
